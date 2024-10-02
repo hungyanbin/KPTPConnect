@@ -14,6 +14,5 @@ interface ApplicationComponent {
 
     fun inject(usbBroadcastReceiver: UsbBroadcastReceiver)
 
-    @Singleton
-    val homeViewModel: HomeViewModel
+    val homeSubComponentFactory: HomeSubComponent.Factory
 }

@@ -30,10 +30,12 @@ class MainActivity : ComponentActivity(), UsbPermissionHelper {
         applicationComponent = (application as MainApplication).getComponent()
         applicationComponent.inject(this)
 
+        val homeSubComponent = applicationComponent.homeSubComponentFactory.create(permissionHelper = this)
+
         enableEdgeToEdge()
         setContent {
             PtpSampleTheme {
-                val viewModel = applicationComponent.homeViewModel
+                val viewModel = homeSubComponent.homeViewModel
                 HomeScreen(viewModel = viewModel)
             }
         }

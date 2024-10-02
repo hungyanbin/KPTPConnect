@@ -45,10 +45,14 @@ fun HomeScreen(
 ) {
     val usbDevices by viewModel.usbDevices.collectAsState()
     val showSimpleDialog by viewModel.showSimpleDialog.collectAsState()
+    val cameraName by viewModel.cameraName.collectAsState()
 
     HomeScreenContent(
-        modifier = modifier.fillMaxSize().safeDrawingPadding(),
+        modifier = modifier
+            .fillMaxSize()
+            .safeDrawingPadding(),
         usbDevices = usbDevices,
+        cameraName = cameraName,
         onDeviceSelected = viewModel::onDeviceSelected
     )
 
@@ -65,6 +69,7 @@ fun HomeScreen(
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     usbDevices: List<UsbDeviceItem>,
+    cameraName: String,
     onDeviceSelected: (UsbDeviceItem) -> Unit
 ) {
     Column(
@@ -79,7 +84,8 @@ fun HomeScreenContent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(150.dp)
+                .background(Color.Gray)
         ) {
             items(usbDevices) { usbDevice ->
                 DeviceItemView(
@@ -90,6 +96,9 @@ fun HomeScreenContent(
             }
         }
 
+        Text(text = "Camera name: $cameraName",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(8.dp))
     }
 }
 
@@ -156,6 +165,7 @@ fun HomeScreenPreview() {
                 UsbDeviceItem(3, "Device 3", true, false),
                 UsbDeviceItem(4, "Device 4", false, true),
             ),
+            cameraName = "Sony",
             onDeviceSelected = {}
         )
     }
