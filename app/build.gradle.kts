@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.timber)
 
     implementation(project(":ptplib"))
+    implementation(project(":PtpCamera"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

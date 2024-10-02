@@ -17,6 +17,11 @@ object PtpLog {
     }
 
     @JvmStatic
+    fun e(message: String, throwable: Throwable) {
+        loggerTree.e(throwable, message)
+    }
+
+    @JvmStatic
     fun e(throwable: Throwable) {
         loggerTree.e(throwable)
     }

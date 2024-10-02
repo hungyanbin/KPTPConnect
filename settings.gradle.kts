@@ -22,4 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "PtpSample"
 include(":app")
 include(":ptplib")
- 
+include(":PtpCamera")

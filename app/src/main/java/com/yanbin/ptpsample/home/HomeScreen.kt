@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.yanbin.ptpsample.R
 import com.yanbin.ptpsample.ui.theme.PtpSampleTheme
 import com.yanbin.ptpsample.usb.UsbDeviceItem
+import com.yanbin.ptpsample.view.SimpleDialog
 
 @Composable
 fun HomeScreen(
@@ -43,17 +44,28 @@ fun HomeScreen(
     viewModel: HomeViewModel
 ) {
     val usbDevices by viewModel.usbDevices.collectAsState()
+    val showSimpleDialog by viewModel.showSimpleDialog.collectAsState()
 
     HomeScreenContent(
         modifier = modifier.fillMaxSize().safeDrawingPadding(),
-        usbDevices = usbDevices
+        usbDevices = usbDevices,
+        onDeviceSelected = viewModel::onDeviceSelected
     )
+
+    if (showSimpleDialog != null) {
+        val dialogTitle = showSimpleDialog ?: ""
+        SimpleDialog(
+            title = dialogTitle,
+            onDismissRequest = viewModel::onSimpleDialogDismissClicked
+        )
+    }
 }
 
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
-    usbDevices: List<UsbDeviceItem>
+    usbDevices: List<UsbDeviceItem>,
+    onDeviceSelected: (UsbDeviceItem) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -73,7 +85,7 @@ fun HomeScreenContent(
                 DeviceItemView(
                     modifier = Modifier.fillMaxWidth(),
                     device = usbDevice,
-                    onDeviceSelected = { }
+                    onDeviceSelected = onDeviceSelected
                 )
             }
         }
@@ -143,7 +155,8 @@ fun HomeScreenPreview() {
                 UsbDeviceItem(2, "Device 2", false, false),
                 UsbDeviceItem(3, "Device 3", true, false),
                 UsbDeviceItem(4, "Device 4", false, true),
-            )
+            ),
+            onDeviceSelected = {}
         )
     }
 }
