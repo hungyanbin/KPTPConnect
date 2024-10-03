@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.dagger)
     // Others
     implementation(libs.timber)
+    implementation(libs.coil.compose)
 
     implementation(project(":ptplib"))
     implementation(project(":PtpCamera"))

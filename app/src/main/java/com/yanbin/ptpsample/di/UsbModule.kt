@@ -2,6 +2,8 @@ package com.yanbin.ptpsample.di
 
 import com.yanbin.ptpsample.home.usecase.PtpUsecase
 import com.yanbin.ptpsample.home.usecase.PtpUsecaseImpl
+import com.yanbin.ptpsample.storage.AndroidStorageManager
+import com.yanbin.ptpsample.storage.StorageManager
 import com.yanbin.ptpsample.usb.AndroidUsbDeviceRepository
 import com.yanbin.ptpsample.usb.UsbDeviceRepository
 import dagger.Binds
@@ -17,4 +19,8 @@ interface UsbModule {
     @Binds
     @Singleton
     fun bindPtpUsecase(impl: PtpUsecaseImpl): PtpUsecase
+
+    @Binds
+    @Singleton
+    fun bindStorageManager(impl: AndroidStorageManager): StorageManager
 }

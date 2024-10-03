@@ -3,6 +3,7 @@ package com.yanbin.ptpsample.home
 import android.hardware.usb.UsbDevice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yanbin.ptp.camera.CameraImage
 import com.yanbin.ptp.camera.IPtpCamera
 import com.yanbin.ptpsample.home.usecase.PtpUsecase
 import com.yanbin.ptpsample.usb.UsbDeviceItem
@@ -12,9 +13,11 @@ import com.yanbin.ptpsample.usb.UsbPermissionListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -40,6 +43,20 @@ class HomeViewModel @Inject constructor(
     val cameraName: StateFlow<String> = _cameraFlow.map { camera ->
         camera?.getName() ?: ""
     }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
+
+    val images: StateFlow<List<CameraImage>> = _cameraFlow.map { camera ->
+        camera?.getCameraImages() ?: emptyList()
+    }.flatMapConcat { images ->
+        images.asFlow()
+    }
+        .map { image ->
+            val downloadThumbnailFile = ptpUsecase.downloadThumbnail(_cameraFlow.value!!, image)
+            image.copy(thumbUrl = downloadThumbnailFile.absolutePath)
+        }
+        .scan(emptyList<CameraImage>()) { acc, value ->
+            acc + value
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
         usbDeviceRepository.setUsbPermissionHelper(permissionHelper)
@@ -71,8 +88,6 @@ class HomeViewModel @Inject constructor(
             kotlin.runCatching {
                 val camera = ptpUsecase.createCameraDevice(usbDeviceItem)
                 _cameraFlow.value = camera
-                _showSimpleDialog.value = "連線成功 ${camera.getName()}"
-//                dashboard.bindAndConnect(camera)
             }.onFailure {
                 Timber.e(it, "Failed to connect to device as camera")
                 _showSimpleDialog.value = "連線失敗，請確認該裝置是否為相機"

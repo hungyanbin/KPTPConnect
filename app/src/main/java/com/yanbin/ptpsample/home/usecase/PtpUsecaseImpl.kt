@@ -4,6 +4,8 @@ import android.content.Context
 import com.yanbin.ptp.camera.CameraImage
 import com.yanbin.ptp.camera.IPtpCamera
 import com.yanbin.ptp.camera.PtpCameraFactory
+import com.yanbin.ptpsample.storage.FileExtension
+import com.yanbin.ptpsample.storage.StorageManager
 import com.yanbin.ptpsample.usb.UsbDeviceItem
 import com.yanbin.ptpsample.usb.UsbDeviceRepository
 import com.yanbin.ptpsample.usb.UsbFacade
@@ -16,6 +18,7 @@ import javax.inject.Inject
 class PtpUsecaseImpl @Inject constructor(
     private val context: Context,
     private val usbFacade: UsbFacade,
+    private val storageManager: StorageManager,
     private val usbDeviceRepository: UsbDeviceRepository,
 ): PtpUsecase {
 
@@ -30,17 +33,15 @@ class PtpUsecaseImpl @Inject constructor(
     }
 
     override suspend fun downloadImage(camera: IPtpCamera, cameraImage: CameraImage) = withContext(Dispatchers.IO) {
-//        val file = storageManager.createRandomExternalFile(FileExtension.Jpeg)
-//        camera.downloadImage(cameraImage.id, file)
-//        file
-        TODO()
+        val file = storageManager.createRandomExternalFile(FileExtension.Jpeg)
+        camera.downloadImage(cameraImage.id, file)
+        file
     }
 
     override suspend fun downloadThumbnail(camera: IPtpCamera, cameraImage: CameraImage) = withContext(Dispatchers.IO) {
-//        val file = storageManager.createRandomExternalFile(FileExtension.Jpeg)
-//        camera.downloadThumbnail(cameraImage.id, file)
-//        file
-        TODO()
+        val file = storageManager.createRandomExternalFile(FileExtension.Jpeg)
+        camera.downloadThumbnail(cameraImage.id, file)
+        file
     }
 
     override suspend fun getCameraConnectionStatus(camera: IPtpCamera): Flow<Boolean> {
