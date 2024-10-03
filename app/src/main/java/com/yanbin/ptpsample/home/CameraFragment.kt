@@ -1,8 +1,11 @@
 package com.yanbin.ptpsample.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,6 +28,7 @@ import java.time.LocalDateTime
 fun CameraFragment(
     modifier: Modifier = Modifier,
     cameraName: String,
+    capturedImage: CameraImage?,
     images: List<CameraImage>
 ) {
     Column(
@@ -35,6 +39,23 @@ fun CameraFragment(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(8.dp)
         )
+
+        Text(
+            text = "Captured Image:",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(8.dp)
+        )
+
+        Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
+            if (capturedImage != null) {
+                CameraImageView(
+                    image = capturedImage,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(4.dp)
+                )
+            }
+        }
 
         Text(
             text = "Photos:",
@@ -63,8 +84,9 @@ fun CameraImageView(
     modifier: Modifier = Modifier,
     image: CameraImage
 ) {
+    val model = image.thumbUrl ?: image.sourceUrl
     AsyncImage(
-        model = image.thumbUrl,
+        model = model,
         contentDescription = image.fileName,
         placeholder = painterResource(id = R.drawable.my_cat),
         contentScale = ContentScale.FillWidth,
@@ -89,6 +111,7 @@ fun CameraFragmentPreview() {
         CameraFragment(
             cameraName = "Sony",
             modifier = Modifier.fillMaxSize(),
+            capturedImage = fakeImage,
             images = listOf(
                 fakeImage,fakeImage,fakeImage,fakeImage,fakeImage,fakeImage,fakeImage,
             )

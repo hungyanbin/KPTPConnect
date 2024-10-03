@@ -3,6 +3,7 @@ package com.yanbin.ptpsample.home
 import android.hardware.usb.UsbDevice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yanbin.ptp.camera.CameraEvent
 import com.yanbin.ptp.camera.CameraImage
 import com.yanbin.ptp.camera.IPtpCamera
 import com.yanbin.ptpsample.home.usecase.PtpUsecase
@@ -10,6 +11,7 @@ import com.yanbin.ptpsample.usb.UsbDeviceItem
 import com.yanbin.ptpsample.usb.UsbDeviceRepository
 import com.yanbin.ptpsample.usb.UsbPermissionHelper
 import com.yanbin.ptpsample.usb.UsbPermissionListener
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -58,6 +60,9 @@ class HomeViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    private val _capturedImage: MutableStateFlow<CameraImage?> = MutableStateFlow(null)
+    val capturedImage: StateFlow<CameraImage?> = _capturedImage.asStateFlow()
+
     init {
         usbDeviceRepository.setUsbPermissionHelper(permissionHelper)
     }
@@ -87,10 +92,36 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             kotlin.runCatching {
                 val camera = ptpUsecase.createCameraDevice(usbDeviceItem)
+                listenToCameraEvents(camera)
                 _cameraFlow.value = camera
             }.onFailure {
                 Timber.e(it, "Failed to connect to device as camera")
                 _showSimpleDialog.value = "連線失敗，請確認該裝置是否為相機"
+            }
+        }
+    }
+
+    private fun listenToCameraEvents(camera: IPtpCamera) {
+        viewModelScope.launch {
+            if (camera.isEventModeSupported()) {
+                camera.setEventMode(true)
+                // Start a looper to listen to camera events
+                while (true) {
+                    val events = camera.getEvents()
+                    events.forEach { event ->
+                        when (event) {
+                            is CameraEvent.ObjectAddedEvent -> {
+                                val image = camera.getCameraImage(event.objectId)
+                                if (image != null) {
+                                    val imageFile = ptpUsecase.downloadImage(camera, image)
+                                    _capturedImage.value = image.copy(sourceUrl = imageFile.absolutePath)
+                                }
+                            }
+                            else -> {}
+                        }
+                    }
+                    delay(1000)
+                }
             }
         }
     }

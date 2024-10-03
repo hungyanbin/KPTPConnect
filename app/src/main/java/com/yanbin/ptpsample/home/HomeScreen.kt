@@ -32,6 +32,7 @@ fun HomeScreen(
     val showSimpleDialog by viewModel.showSimpleDialog.collectAsState()
     val cameraName by viewModel.cameraName.collectAsState()
     val images by viewModel.images.collectAsState()
+    val capturedImage by viewModel.capturedImage.collectAsState()
 
     HomeScreenContent(
         modifier = modifier
@@ -39,6 +40,7 @@ fun HomeScreen(
             .safeDrawingPadding(),
         usbDevices = usbDevices,
         cameraName = cameraName,
+        capturedImage = capturedImage,
         images = images,
         onDeviceSelected = viewModel::onDeviceSelected
     )
@@ -57,6 +59,7 @@ fun HomeScreenContent(
     modifier: Modifier = Modifier,
     usbDevices: List<UsbDeviceItem>,
     cameraName: String,
+    capturedImage: CameraImage?,
     images: List<CameraImage>,
     onDeviceSelected: (UsbDeviceItem) -> Unit
 ) {
@@ -88,6 +91,7 @@ fun HomeScreenContent(
             CameraFragment(
                 modifier = Modifier.fillMaxSize(),
                 cameraName = cameraName,
+                capturedImage = capturedImage,
                 images = images
             )
         }
@@ -107,6 +111,7 @@ fun HomeScreenPreview() {
                 UsbDeviceItem(4, "Device 4", false, true),
             ),
             cameraName = "Sony",
+            capturedImage = null,
             images = emptyList(),
             onDeviceSelected = {}
         )
