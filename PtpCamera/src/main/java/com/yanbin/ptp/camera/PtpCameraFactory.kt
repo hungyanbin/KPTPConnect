@@ -2,6 +2,7 @@ package com.yanbin.ptp.camera
 
 import android.content.Context
 import android.hardware.usb.UsbDevice
+import com.yanbin.ptp.camera.canon.CanonCamera
 
 class PtpCameraFactory(private val context: Context) {
 

@@ -1,4 +1,6 @@
-package com.linein.ptplib.packets
+package com.yanbin.ptp.camera.canon.packet
+
+import com.linein.ptplib.packets.Packet
 
 // To parse other types of events, See https://github.com/gphoto/libgphoto2/blob/master/camlibs/ptp2/ptp-pack.c#L2080
 

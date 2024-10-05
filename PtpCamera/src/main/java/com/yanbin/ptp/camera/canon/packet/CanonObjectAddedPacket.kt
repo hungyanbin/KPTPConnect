@@ -1,6 +1,7 @@
-package com.linein.ptplib.packets
+package com.yanbin.ptp.camera.canon.packet
 
 import com.linein.ptplib.constants.ObjectFormat
+import com.linein.ptplib.packets.Packet
 
 
 data class CanonObjectAddedPacket(

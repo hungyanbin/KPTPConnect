@@ -1,15 +1,18 @@
-package com.yanbin.ptp.camera
+package com.yanbin.ptp.camera.canon
 
 import android.content.Context
 import com.linein.ptplib.PtpLog
 import com.linein.ptplib.connection.PtpSession
 import com.linein.ptplib.constants.ObjectFormat
 import com.linein.ptplib.constants.PtpOc
-import com.linein.ptplib.packets.CannonEvent
-import com.linein.ptplib.packets.CanonEventPacket
-import com.linein.ptplib.packets.CanonObjectAddedPacket
+import com.yanbin.ptp.camera.canon.packet.CanonObjectAddedPacket
 import com.linein.ptplib.packets.ObjectInfoPacket
 import com.linein.ptplib.packets.Packet
+import com.yanbin.ptp.camera.BasePtpCamera
+import com.yanbin.ptp.camera.CameraEvent
+import com.yanbin.ptp.camera.CameraImage
+import com.yanbin.ptp.camera.canon.packet.CannonEvent
+import com.yanbin.ptp.camera.canon.packet.CanonEventPacket
 import com.yanbin.ptp.utils.toTimestamp
 import kotlinx.coroutines.withContext
 
