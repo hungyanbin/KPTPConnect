@@ -27,4 +27,6 @@ class ObjectInfoPacket(
     val sequenceNumber = fieldReader.readInt()
     val filename = fieldReader.readString()
     val dateCreated = fieldReader.readDateTime()
+    val dateModified = fieldReader.readDateTime()
+    val keywords = fieldReader.readString()
 }

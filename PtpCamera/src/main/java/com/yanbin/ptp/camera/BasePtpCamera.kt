@@ -53,7 +53,7 @@ abstract class BasePtpCamera(
         session = PtpSession(ptpConnection).apply {
             val data = getDeviceInfo(true)
             onInitSession(this)
-            val deviceInfo = DeviceInfoPacket(data)
+            val deviceInfo = DeviceInfoPacket(data.packet)
             operationsSupported.addAll(deviceInfo.operationsSupported.toHashSet())
 
             name = usbDevice.productName

@@ -38,6 +38,11 @@ class FieldReader(
         return readValue(reader, stepper)
     }
 
+    fun readShortArray(): ShortArray {
+        val length = readInt()
+        return 0.until(length).map { readShort() }.toShortArray()
+    }
+
     fun <T> readValue(reader: (ByteArray, Int) -> T, stepper: (ByteArray, Int) -> Int): T {
         val value = reader(data, currentOffset)
         stepOffset(stepper(data, currentOffset))
