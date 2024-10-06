@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Packet 
 {
-	private byte[] packet;
+	public byte[] packet;
 	private char[] charbuffer;
 
 	public Packet(byte[] packet)//, boolean cloneit)

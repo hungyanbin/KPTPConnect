@@ -1,86 +1,53 @@
 package com.linein.ptplib.packets
 
-import com.linein.ptplib.constants.ObjectFormat
-import java.time.LocalDateTime
+import com.linein.ptplib.packets.utils.DateTimePacketField
+import com.linein.ptplib.packets.utils.IntPacketField
+import com.linein.ptplib.packets.utils.ObjectFormatPacketField
+import com.linein.ptplib.packets.utils.ShortPacketField
+import com.linein.ptplib.packets.utils.StringPacketField
 
-data class ObjectInfoPacket(
-    val storageId: Int,
-    val objectFormat: ObjectFormat,
-    val protectionStatus: Short,
-    val objectCompressedSize: Int,
-    val thumbFormat: ObjectFormat,
-    val thumbCompressedSize: Int,
-    val thumbPixWidth: Int,
-    val thumbPixHeight: Int,
-    val imagePixWidth: Int,
-    val imagePixHeight: Int,
-    val imageBitDepth: Int,
-    val parentObject: Int,
-    val associationType: Short,
-    val associationDesc: Int,
-    val sequenceNumber: Int,
-    val filename: String,
-    val dateCreated: LocalDateTime,
-) {
+open class Packet2(val data: ByteArray)
+
+class ObjectInfoPacket(
+    data: ByteArray
+): Packet2(data) {
+
+    constructor(packet: Packet): this(packet.packet)
+
+    val storageId by IntPacketField(OFFSET_STORAGE_ID)
+    val objectFormat by ObjectFormatPacketField(OFFSET_OBJECT_FORMAT)
+    val protectionStatus by ShortPacketField(OFFSET_PROTECTION_STATUS)
+    val objectCompressedSize by IntPacketField(OFFSET_OBJECT_COMPRESSED_SIZE)
+    val thumbFormat by ObjectFormatPacketField(OFFSET_THUMB_FORMAT)
+    val thumbCompressedSize by IntPacketField(OFFSET_THUMB_COMPRESSED_SIZE)
+    val thumbPixWidth by IntPacketField(OFFSET_THUMB_PIX_WIDTH)
+    val thumbPixHeight by IntPacketField(OFFSET_THUMB_PIX_HEIGHT)
+    val imagePixWidth by IntPacketField(OFFSET_IMAGE_PIX_WIDTH)
+    val imagePixHeight by IntPacketField(OFFSET_IMAGE_PIX_HEIGHT)
+    val imageBitDepth by IntPacketField(OFFSET_IMAGE_BIT_DEPTH)
+    val parentObject by IntPacketField(OFFSET_PARENT_OBJECT)
+    val associationType by ShortPacketField(OFFSET_ASSOCIATION_TYPE)
+    val associationDesc by IntPacketField(OFFSET_ASSOCIATION_DESC)
+    val sequenceNumber by IntPacketField(OFFSET_SEQUENCE_NUMBER)
+    val filename by StringPacketField(OFFSET_FILENAME)
+    val dateCreated by DateTimePacketField(OFFSET_FILENAME + 1 + (filename.length + 1) * 2)
 
     companion object {
-        private const val offset_storageId = 0x00
-        private const val offset_objectFormat = 0x04
-        private const val offset_protectionStatus = 0x06
-        private const val offset_objectCompressedSize = 0x08
-        private const val offset_thumbFormat = 0x0c
-        private const val offset_thumbCompressedSize = 0x0e
-        private const val offset_thumbPixWidth = 0x12
-        private const val offset_thumbPixHeight = 0x16
-        private const val offset_imagePixWidth = 0x1a
-        private const val offset_imagePixHeight = 0x1e
-        private const val offset_imageBitDepth = 0x22
-        private const val offset_parentObject = 0x26
-        private const val offset_associationType = 0x2a
-        private const val offset_associationDesc = 0x2c
-        private const val offset_sequenceNumber = 0x30
-        private const val offset_filename = 0x34
-
-        fun fromPacket(packet: Packet): ObjectInfoPacket {
-            val storageId = packet.getIntL(offset_storageId)
-            val objectFormat = packet.getShortL(offset_objectFormat)
-            val protectionStatus = packet.getShortL(offset_protectionStatus)
-            val objectCompressedSize = packet.getIntL(offset_objectCompressedSize)
-            val thumbFormat = packet.getShortL(offset_thumbFormat)
-            val thumbCompressedSize = packet.getIntL(offset_thumbCompressedSize)
-            val thumbPixWidth = packet.getIntL(offset_thumbPixWidth)
-            val thumbPixHeight = packet.getIntL(offset_thumbPixHeight)
-            val imagePixWidth = packet.getIntL(offset_imagePixWidth)
-            val imagePixHeight = packet.getIntL(offset_imagePixHeight)
-            val imageBitDepth = packet.getIntL(offset_imageBitDepth)
-            val parentObject = packet.getIntL(offset_parentObject)
-            val associationType = packet.getShortL(offset_associationType)
-            val associationDesc = packet.getIntL(offset_associationDesc)
-            val sequenceNumber = packet.getIntL(offset_sequenceNumber)
-            val filename = packet.getCompactString(offset_filename)
-
-            val dateCreated = packet.getDateTime(offset_filename + 1 + (filename.length + 1)*2)
-            return ObjectInfoPacket(
-                storageId,
-                ObjectFormat.values().firstOrNull { it.formatCode == objectFormat }
-                    ?: throw IllegalArgumentException("Unknown format code: $objectFormat"),
-                protectionStatus,
-                objectCompressedSize,
-                ObjectFormat.values().firstOrNull { it.formatCode == thumbFormat }
-                    ?: throw IllegalArgumentException("Unknown format code: $thumbFormat"),
-                thumbCompressedSize,
-                thumbPixWidth,
-                thumbPixHeight,
-                imagePixWidth,
-                imagePixHeight,
-                imageBitDepth,
-                parentObject,
-                associationType,
-                associationDesc,
-                sequenceNumber,
-                filename,
-                dateCreated,
-            )
-        }
+        private const val OFFSET_STORAGE_ID = 0x00
+        private const val OFFSET_OBJECT_FORMAT = 0x04
+        private const val OFFSET_PROTECTION_STATUS = 0x06
+        private const val OFFSET_OBJECT_COMPRESSED_SIZE = 0x08
+        private const val OFFSET_THUMB_FORMAT = 0x0c
+        private const val OFFSET_THUMB_COMPRESSED_SIZE = 0x0e
+        private const val OFFSET_THUMB_PIX_WIDTH = 0x12
+        private const val OFFSET_THUMB_PIX_HEIGHT = 0x16
+        private const val OFFSET_IMAGE_PIX_WIDTH = 0x1a
+        private const val OFFSET_IMAGE_PIX_HEIGHT = 0x1e
+        private const val OFFSET_IMAGE_BIT_DEPTH = 0x22
+        private const val OFFSET_PARENT_OBJECT = 0x26
+        private const val OFFSET_ASSOCIATION_TYPE = 0x2a
+        private const val OFFSET_ASSOCIATION_DESC = 0x2c
+        private const val OFFSET_SEQUENCE_NUMBER = 0x30
+        private const val OFFSET_FILENAME = 0x34
     }
 }

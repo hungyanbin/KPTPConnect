@@ -124,7 +124,7 @@ abstract class BasePtpCamera(
         objectIds.asSequence().mapNotNull { objectId ->
             tryOrNull {
                 session.getObjectInfo(objectId).let {
-                    objectId to ObjectInfoPacket.fromPacket(it)
+                    objectId to ObjectInfoPacket(it)
                 }
             }
         }.filter { (_, objectInfoPacket) -> objectInfoPacket.objectFormat == ObjectFormat.EXIF_JPEG }
@@ -148,7 +148,7 @@ abstract class BasePtpCamera(
 
     override suspend fun getCameraImage(imageId: Int): CameraImage? = withContext(dispatcher) {
         val session = getPtpSession()
-        val objectInfoPacket = ObjectInfoPacket.fromPacket(session.getObjectInfo(imageId))
+        val objectInfoPacket = ObjectInfoPacket(session.getObjectInfo(imageId))
         if (objectInfoPacket.objectFormat != ObjectFormat.EXIF_JPEG) {
             return@withContext null
         }

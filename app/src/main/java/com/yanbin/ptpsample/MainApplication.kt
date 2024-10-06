@@ -4,6 +4,7 @@ import android.app.Application
 import com.yanbin.ptpsample.di.ApplicationComponent
 import com.yanbin.ptpsample.di.ApplicationModule
 import com.yanbin.ptpsample.di.DaggerApplicationComponent
+import timber.log.Timber
 
 class MainApplication: Application() {
 
@@ -15,6 +16,8 @@ class MainApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Timber.plant(Timber.DebugTree())
     }
 
     fun getComponent(): ApplicationComponent {

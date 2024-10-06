@@ -47,7 +47,7 @@ class NikonCamera(
             val objectAddedPacket = ObjectAddedEventPacket.fromPacket(packet)
             PtpLog.d("Object added: $objectAddedPacket")
             val objectInfoPacket = session.getObjectInfo(objectAddedPacket.objectId).let {
-                ObjectInfoPacket.fromPacket(it)
+                ObjectInfoPacket(it)
             }
             PtpLog.d("objectInfoPacket: $objectInfoPacket")
             CameraEvent.ObjectAddedEvent(
