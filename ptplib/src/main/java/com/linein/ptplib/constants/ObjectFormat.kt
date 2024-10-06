@@ -1,6 +1,5 @@
 package com.linein.ptplib.constants
 
-
 enum class ObjectFormat(val formatCode: Short) {
     Undefined(0x3000),
     Defined(0x3800),

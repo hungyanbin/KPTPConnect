@@ -2,43 +2,67 @@ package com.linein.ptplib.packets.utils
 
 import com.linein.ptplib.constants.ObjectFormat
 import com.linein.ptplib.packets.PtpEvent
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 open class Packet3(
     private val data: ByteArray
 ) {
-    private val fieldReader = FieldReader(data)
+    val fieldReader = FieldReader(data)
 
-    protected fun readShort(): Short {
-        return fieldReader.read(2) { data, offset ->
-            getShortL(data, offset)
-        }
+}
+
+class FieldReader(
+    private val data: ByteArray
+) {
+    private var currentOffset = 0
+
+    fun readInt(): Int {
+        val reader = { data: ByteArray, offset: Int -> getIntL(data, offset) }
+        val stepper = { _: ByteArray, _: Int -> 4 }
+        return readValue(reader, stepper)
     }
 
-    protected fun readInt(): Int {
-        return fieldReader.read(4) { data, offset ->
-            getIntL(data, offset)
-        }
+    fun readShort(): Short {
+        val reader = { data: ByteArray, offset: Int -> getShortL(data, offset) }
+        val stepper = { _: ByteArray, _: Int -> 2 }
+        return readValue(reader, stepper)
     }
 
-    protected fun readPtpEvent(): PtpEvent {
-        return fieldReader.read(4) { data, offset ->
-            val rawEventCode = getIntL(data, offset)
-            PtpEvent.values().firstOrNull { it.eventCode == rawEventCode.toShort() }
-                ?: throw IllegalArgumentException("Unknown event code: $rawEventCode")
+    fun readString(): String {
+        val reader = { data: ByteArray, offset: Int -> getCompactString(data, offset) }
+        val stepper = { data: ByteArray, offset: Int ->
+            val stringLength = data[offset].toInt()
+            stringLength * 2 + 1
         }
+        return readValue(reader, stepper)
     }
 
-    protected fun readObjectFormat(): ObjectFormat {
-        return fieldReader.read(2) { data, offset ->
-            val shortValue = getShortL(data, offset)
-            ObjectFormat.values().firstOrNull { it.formatCode == shortValue }
-                ?: throw IllegalArgumentException("Unknown format code: $shortValue")
-        }
+    fun <T> readValue(reader: (ByteArray, Int) -> T, stepper: (ByteArray, Int) -> Int): T {
+        val value = reader(data, currentOffset)
+        stepOffset(stepper(data, currentOffset))
+        return value
     }
 
-    private fun getShortL(data: ByteArray, offset: Int): Short {
-        return ((0x000000ff and data[offset].toInt())
-                or ((0x000000ff and data[offset + 1].toInt()) shl 8)).toShort()
+    private fun getCompactString(data: ByteArray, offset: Int): String {
+        var offset = offset
+        val no: Int = data[offset++].toInt()
+
+        val charbuffer = CharArray(no)
+        var len = 0
+        while (len < charbuffer.size && offset < data.size) {
+            charbuffer[len] = Char(data[offset].toUShort())
+            if (charbuffer[len] == '\u0000') {
+                break
+            }
+            len++
+            offset += 2
+        }
+        return String(charbuffer, 0, len)
+    }
+
+    private fun stepOffset(size: Int) {
+        currentOffset += size
     }
 
     private fun getIntL(data: ByteArray, offset: Int): Int {
@@ -53,16 +77,27 @@ open class Packet3(
         }
         return value
     }
+
+    private fun getShortL(data: ByteArray, offset: Int): Short {
+        return ((0x000000ff and data[offset].toInt())
+                or ((0x000000ff and data[offset + 1].toInt()) shl 8)).toShort()
+    }
 }
 
-class FieldReader(
-    private val data: ByteArray
-) {
-    private var currentOffset = 0
-    
-    fun <T> read(size: Int, reader: (ByteArray, Int) -> T): T {
-        val value = reader(data, currentOffset)
-        currentOffset += size
-        return value
-    }
+fun FieldReader.readPtpEvent(): PtpEvent {
+    val rawEventCode = readInt()
+    return PtpEvent.values().firstOrNull { it.eventCode == rawEventCode.toShort() }
+        ?: throw IllegalArgumentException("Unknown event code: $rawEventCode")
+}
+
+fun FieldReader.readObjectFormat(): ObjectFormat {
+    val shortValue = readShort()
+    return ObjectFormat.values().firstOrNull { it.formatCode == shortValue }
+        ?: ObjectFormat.Undefined
+}
+
+fun FieldReader.readDateTime(): LocalDateTime {
+    val stringValue = readString()
+    val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.0")
+    return LocalDateTime.parse(stringValue, formatter)
 }
