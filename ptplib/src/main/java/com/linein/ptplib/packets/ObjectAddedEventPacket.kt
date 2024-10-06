@@ -1,16 +1,11 @@
 package com.linein.ptplib.packets
 
-import com.linein.ptplib.packets.utils.IntPacketField
-import com.linein.ptplib.packets.utils.PtpEventPacketField
+import com.linein.ptplib.packets.utils.Packet3
 
 class ObjectAddedEventPacket(
     data: ByteArray
-): Packet2(data) {
+): Packet3(data) {
 
-    val event by PtpEventPacketField(0)
-    val objectId by IntPacketField(OFFSET_OBJECT_ID)
-
-    companion object {
-        private const val OFFSET_OBJECT_ID = 0x02
-    }
+    val event = readPtpEvent()
+    val objectId = readInt()
 }
