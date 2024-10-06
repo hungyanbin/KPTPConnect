@@ -1,18 +1,16 @@
 package com.linein.ptplib.packets
 
-data class ObjectAddedEventPacket(
-    val event: PtpEvent,
-    val objectId: Int,
-) {
+import com.linein.ptplib.packets.utils.IntPacketField
+import com.linein.ptplib.packets.utils.PtpEventPacketField
+
+class ObjectAddedEventPacket(
+    data: ByteArray
+): Packet2(data) {
+
+    val event by PtpEventPacketField(0)
+    val objectId by IntPacketField(OFFSET_OBJECT_ID)
 
     companion object {
-        private const val offset_objectId = 0x02
-
-        fun fromPacket(packet: Packet): ObjectAddedEventPacket {
-            val event = PtpEvent.fromPacket(packet) ?: throw IllegalStateException("Should not be null!!")
-
-            val objectId = packet.getIntL(offset_objectId)
-            return ObjectAddedEventPacket(event, objectId)
-        }
+        private const val OFFSET_OBJECT_ID = 0x02
     }
 }
