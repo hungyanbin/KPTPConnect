@@ -27,7 +27,7 @@ class CanonCamera(
 
     override suspend fun getCameraImage(imageId: Int): CameraImage? = withContext(dispatcher) {
         val session = getPtpSession()
-        val objectInfoPacket = ObjectInfoPacket(session.getObjectInfo(imageId))
+        val objectInfoPacket = ObjectInfoPacket(session.getObjectInfo(imageId).packet)
         if (objectInfoPacket.objectFormat != ObjectFormat.EXIF_JPEG) {
             return@withContext null
         }
@@ -81,7 +81,7 @@ class CanonCamera(
             val objectAddedPacket = CanonObjectAddedPacket.fromPacket(packet)
             PtpLog.d("Object added: $objectAddedPacket")
             val objectInfoPacket = session.getObjectInfo(objectAddedPacket.objectId).let {
-                ObjectInfoPacket(it)
+                ObjectInfoPacket(it.packet)
             }
             PtpLog.d("objectInfoPacket: $objectInfoPacket")
             CameraEvent.ObjectAddedEvent(

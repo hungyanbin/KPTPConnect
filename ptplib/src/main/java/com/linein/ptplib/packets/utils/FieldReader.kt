@@ -5,13 +5,6 @@ import com.linein.ptplib.packets.PtpEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-open class Packet3(
-    private val data: ByteArray
-) {
-    val fieldReader = FieldReader(data)
-
-}
-
 class FieldReader(
     private val data: ByteArray
 ) {

@@ -1,23 +1,21 @@
 package com.linein.ptplib.packets
 
-import com.linein.ptplib.packets.utils.Packet3
+import com.yanbin.ptplib.annotation.PtpPacket
 
-class DeviceInfoPacket(
-    data: ByteArray
-): Packet3(data) {
-
-    val standardVersion = fieldReader.readShort()
-    val vendorExtensionId = fieldReader.readInt()
-    val vendorExtensionVersion = fieldReader.readShort()
-    val vendorExtensions = fieldReader.readString()
-    val functionalMode = fieldReader.readShort()
-    val operationsSupported = fieldReader.readShortArray()
-    val eventsSupported = fieldReader.readShortArray()
-    val devicePropertiesSupported = fieldReader.readShortArray()
-    val captureFormats = fieldReader.readShortArray()
-    val playbackFormats = fieldReader.readShortArray()
-    val manufacturer = fieldReader.readString()
-    val model = fieldReader.readString()
-    val deviceVersion = fieldReader.readString()
-    val serialNumber = fieldReader.readString()
-}
+@PtpPacket
+data class DeviceInfoPacket(
+    val standardVersion: Short,
+    val vendorExtensionId: Int,
+    val vendorExtensionVersion: Short,
+    val vendorExtensions: String,
+    val functionalMode: Short,
+    val operationsSupported: List<Short>,
+    val eventsSupported: List<Short>,
+    val devicePropertiesSupported: List<Short>,
+    val captureFormats: List<Short>,
+    val playbackFormats: List<Short>,
+    val manufacturer: String,
+    val model:String,
+    val deviceVersion:String,
+    val serialNumber: String,
+)

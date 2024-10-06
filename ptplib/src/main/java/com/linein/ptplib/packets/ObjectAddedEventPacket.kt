@@ -1,12 +1,9 @@
 package com.linein.ptplib.packets
 
-import com.linein.ptplib.packets.utils.Packet3
-import com.linein.ptplib.packets.utils.readPtpEvent
+import com.yanbin.ptplib.annotation.PtpPacket
 
-class ObjectAddedEventPacket(
-    data: ByteArray
-): Packet3(data) {
-
-    val event = fieldReader.readPtpEvent()
-    val objectId = fieldReader.readInt()
-}
+@PtpPacket
+data class ObjectAddedEventPacket(
+    val event: PtpEvent,
+    val objectId: Int,
+)

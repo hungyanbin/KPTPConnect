@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -35,6 +36,9 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+
+    implementation(project(":ptpAnnotation"))
+    ksp(project(":ptpAnnotationProcessor"))
 
     // Timber
     implementation(libs.timber)

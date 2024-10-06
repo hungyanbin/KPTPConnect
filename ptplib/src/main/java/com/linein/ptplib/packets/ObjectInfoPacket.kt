@@ -1,32 +1,28 @@
 package com.linein.ptplib.packets
 
-import com.linein.ptplib.packets.utils.Packet3
-import com.linein.ptplib.packets.utils.readDateTime
-import com.linein.ptplib.packets.utils.readObjectFormat
+import com.linein.ptplib.constants.ObjectFormat
+import com.yanbin.ptplib.annotation.PtpPacket
+import java.time.LocalDateTime
 
-class ObjectInfoPacket(
-    data: ByteArray
-): Packet3(data) {
-
-    constructor(packet: Packet): this(packet.packet)
-
-    val storageId = fieldReader.readInt()
-    val objectFormat = fieldReader.readObjectFormat()
-    val protectionStatus = fieldReader.readShort()
-    val objectCompressedSize = fieldReader.readInt()
-    val thumbFormat = fieldReader.readObjectFormat()
-    val thumbCompressedSize = fieldReader.readInt()
-    val thumbPixWidth = fieldReader.readInt()
-    val thumbPixHeight = fieldReader.readInt()
-    val imagePixWidth = fieldReader.readInt()
-    val imagePixHeight = fieldReader.readInt()
-    val imageBitDepth = fieldReader.readInt()
-    val parentObject = fieldReader.readInt()
-    val associationType = fieldReader.readShort()
-    val associationDesc = fieldReader.readInt()
-    val sequenceNumber = fieldReader.readInt()
-    val filename = fieldReader.readString()
-    val dateCreated = fieldReader.readDateTime()
-    val dateModified = fieldReader.readDateTime()
-    val keywords = fieldReader.readString()
-}
+@PtpPacket
+data class ObjectInfoPacket(
+    val storageId: Int,
+    val objectFormat: ObjectFormat,
+    val protectionStatus: Short,
+    val objectCompressedSize: Int,
+    val thumbFormat: ObjectFormat,
+    val thumbCompressedSize: Int,
+    val thumbPixWidth: Int,
+    val thumbPixHeight: Int,
+    val imagePixWidth: Int,
+    val imagePixHeight: Int,
+    val imageBitDepth: Int,
+    val parentObject: Int,
+    val associationType: Short,
+    val associationDesc: Int,
+    val sequenceNumber: Int,
+    val filename: String,
+    val dateCreated: LocalDateTime,
+    val dateModified: LocalDateTime,
+    val keywords: String,
+)
